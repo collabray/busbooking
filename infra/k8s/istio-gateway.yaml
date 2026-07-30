@@ -1,0 +1,136 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: omnibus-gateway
+  namespace: omnibus
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: omnibus-tls-cert
+    hosts:
+    - "api.omnibus.ea"
+    - "admin.omnibus.ea"
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "api.omnibus.ea"
+    - "admin.omnibus.ea"
+    tls:
+      httpsRedirect: true
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: omnibus-routes
+  namespace: omnibus
+spec:
+  hosts:
+  - "api.omnibus.ea"
+  gateways:
+  - omnibus-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api/v1/auth
+    route:
+    - destination:
+        host: auth-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/v1/bookings
+    route:
+    - destination:
+        host: booking-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/v1/routes
+    - uri:
+        prefix: /api/v1/schedules
+    - uri:
+        prefix: /api/v1/buses
+    route:
+    - destination:
+        host: inventory-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/v1/payments
+    route:
+    - destination:
+        host: payment-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/v1/tickets
+    route:
+    - destination:
+        host: ticket-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/v1/notify
+    route:
+    - destination:
+        host: notification-service
+        port:
+          number: 8000
+  - match:
+    - uri:
+        prefix: /api/v1/wallets
+    route:
+    - destination:
+        host: wallet-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/v1/cargo
+    route:
+    - destination:
+        host: cargo-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /api/v1/admin
+    route:
+    - destination:
+        host: admin-service
+        port:
+          number: 8080
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: omnibus
+spec:
+  mtls:
+    mode: STRICT
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: omnibus-mtls
+  namespace: omnibus
+spec:
+  host: "*.omnibus.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL

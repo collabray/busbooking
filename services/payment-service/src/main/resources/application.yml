@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:omnibus_payments}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:secret}
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 20000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+    producer:
+      acks: all
+      retries: 3
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+mpesa:
+  consumer-key: ${MPESA_CONSUMER_KEY}
+  consumer-secret: ${MPESA_CONSUMER_SECRET}
+  shortcode: ${MPESA_SHORTCODE}
+  passkey: ${MPESA_PASSKEY}
+  base-url: ${MPESA_BASE_URL:https://sandbox.safaricom.co.ke}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      service: payment-service

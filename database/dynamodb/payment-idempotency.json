@@ -1,0 +1,27 @@
+{
+  "TableName": "OmniBus_Payment_Idempotency",
+  "KeySchema": [
+    { "AttributeName": "paymentRef", "KeyType": "HASH" }
+  ],
+  "AttributeDefinitions": [
+    { "AttributeName": "paymentRef", "AttributeType": "S" },
+    { "AttributeName": "status", "AttributeType": "S" }
+  ],
+  "BillingMode": "PAY_PER_REQUEST",
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "status-index",
+      "KeySchema": [
+        { "AttributeName": "status", "KeyType": "HASH" }
+      ],
+      "Projection": { "ProjectionType": "ALL" }
+    }
+  ],
+  "SSESpecification": {
+    "Enabled": true,
+    "SSEType": "KMS"
+  },
+  "PointInTimeRecoverySpecification": {
+    "PointInTimeRecoveryEnabled": true
+  }
+}

@@ -1,0 +1,101 @@
+_format_version: "3.0"
+
+services:
+  - name: auth-service
+    url: http://auth-service:8080
+    routes:
+      - name: auth-routes
+        paths:
+          - /api/v1/auth
+        strip_path: false
+
+  - name: booking-service
+    url: http://booking-service:8080
+    routes:
+      - name: booking-routes
+        paths:
+          - /api/v1/bookings
+        strip_path: false
+
+  - name: inventory-service
+    url: http://inventory-service:8080
+    routes:
+      - name: inventory-routes
+        paths:
+          - /api/v1/routes
+          - /api/v1/schedules
+          - /api/v1/buses
+        strip_path: false
+
+  - name: payment-service
+    url: http://payment-service:8080
+    routes:
+      - name: payment-routes
+        paths:
+          - /api/v1/payments
+        strip_path: false
+
+  - name: ticket-service
+    url: http://ticket-service:8080
+    routes:
+      - name: ticket-routes
+        paths:
+          - /api/v1/tickets
+        strip_path: false
+
+  - name: notification-service
+    url: http://notification-service:8000
+    routes:
+      - name: notification-routes
+        paths:
+          - /api/v1/notify
+        strip_path: false
+
+  - name: wallet-service
+    url: http://wallet-service:8080
+    routes:
+      - name: wallet-routes
+        paths:
+          - /api/v1/wallets
+        strip_path: false
+
+  - name: cargo-service
+    url: http://cargo-service:8080
+    routes:
+      - name: cargo-routes
+        paths:
+          - /api/v1/cargo
+        strip_path: false
+
+  - name: admin-service
+    url: http://admin-service:8080
+    routes:
+      - name: admin-routes
+        paths:
+          - /api/v1/admin
+        strip_path: false
+
+plugins:
+  - name: rate-limiting
+    config:
+      minute: 100
+      policy: redis
+      redis_host: redis
+      redis_port: 6379
+
+  - name: cors
+    config:
+      origins:
+        - "https://omnibus.ea"
+        - "https://admin.omnibus.ea"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      headers:
+        - Authorization
+        - Content-Type
+        - X-Request-ID
+      max_age: 86400

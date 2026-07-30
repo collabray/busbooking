@@ -1,0 +1,19 @@
+{
+  "TableName": "OmniBus_Admin_Audit_Ledger",
+  "KeySchema": [
+    { "AttributeName": "ADMIN_ID", "KeyType": "HASH" },
+    { "AttributeName": "TIMESTAMP_ACTION_ID", "KeyType": "RANGE" }
+  ],
+  "AttributeDefinitions": [
+    { "AttributeName": "ADMIN_ID", "AttributeType": "S" },
+    { "AttributeName": "TIMESTAMP_ACTION_ID", "AttributeType": "S" }
+  ],
+  "BillingMode": "PAY_PER_REQUEST",
+  "SSESpecification": {
+    "Enabled": true,
+    "SSEType": "KMS"
+  },
+  "PointInTimeRecoverySpecification": {
+    "PointInTimeRecoveryEnabled": true
+  }
+}
